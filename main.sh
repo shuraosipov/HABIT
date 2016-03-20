@@ -1,44 +1,49 @@
 #!/bin/bash
+# HAndy Bash system Information Tool
 
-
-pause() {
-  declare m="$@"
-  echo "$m"
+# define functions
+# pauseable
+function pause() {
+  local message="$@"
+  echo "$message"
   read -p "Press [Enter] to continue..." key
 }
 
+# show menu options
+function show_menu() {
+    clear
+    echo "===================================="
+    echo "HABIT Main Menu"
+    echo "===================================="
+    echo "1. Show filesystem information"
+    echo "2. Show block device information"
+    echo "3. List of directories under '/' and their size"
+    echo "4. Show disk space usage"
+    echo "5. Show top memory & cpu eating process"
+    echo "6. Show network config and stats"
+    echo "7. Show operating system information"
+    echo "8. Show users activity"
+    echo "q for Exit"
+    echo ""
+    read -p "Select menu option: " answer
+}
+
+
 while true
 do
-    clear
-    echo " "
-    echo "Menu: "
-    echo "=================================================="
-    
-    echo "1 - Display file system information and parameters"
-    echo "2 - Block devices installed on the system"
-    echo "3 - List of directories under "/" partition with total amount of each directory"
-    echo "4 - Disk space usage"
-    echo "5 - Current system utilization (CPU, Memory, IO, Net)"
-    echo "6 - Network configuration, mount points, runlevel, startup scrupts, cron jobs"
-    echo "7 - Kernel version, OS version, etc."
-    echo "8 - Uptime, last login with details, list of logged in users, last commands executed"
-    echo "q for exit"
-    
-    echo " "
-    read -r -p "Enter your choise [1-8]: " answer
-	
-    case $answer in
-      1) pause "$(mount)" ;;
-      2) pause "$(lsblk)" ;;
-      3) pause "$(du -sh /home/shuraosipov)" ;;
-	  q) break	;; 
-      *) pause "$(echo "Invalid option")" ;;
-    esac
-
-
-
-
-
-
+  show_menu
+  case $answer in
+    1) pause "$(df -h)" ;;
+    2) pause "$(lsblk)" ;;
+    3) pause "$(du -sh /)" ;;
+    4) pause "$(df -h)" ;;
+    5) ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10; pause ;;
+    6) ip -4 -o -s addr | column -t;
+       echo ""
+       cat /etc/resolv.conf; pause ;;
+    7) pause "$(uname -r)" ;;
+    8) pause "$(who)" ;;
+    q) break ;;
+  esac
 
 done

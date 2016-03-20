@@ -7,6 +7,7 @@ awk 'BEGIN { print "DEVICE_NAME\tFS_TYPE\tMOUNT_OPTIONS\n"
 	     print "===========\t=======\t=============\n";	
 		   }
 
-	   { print $1,"\t\t",$3,"\t\t",$4;
+	   { print $1,"\t\t",$3,"\t\t",$4"\n"
+	     print "+++\t\t++++++\t\t++++++++++++++++++\n";
 	   }
 END { print "---------\nFile Complete" }' /etc/mtab | grep -E '(^/|^DEVICE_NAME|^===)' | column -t
