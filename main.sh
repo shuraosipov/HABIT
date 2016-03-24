@@ -1,62 +1,45 @@
 #!/bin/bash
+# Usage : bash main.sh
 # HAndy Bash system Information Tool
 
+# Include config elements and functions from configuration file
+CONFIG_FILE="config.sh"
+source "$CONFIG_FILE"
 
-# check root privileges
-function check_root() {
-  local user_id="$(id -u)"
-  if [[ "$user_id" -ne '0' ]]
-  then
-    echo "You must be root to start this tool"
-    exit 999
-  fi
-}
-
-
-# pauseable
-function pause() {
-  local message="$@"
-  echo "$message"
-  read -p "Press [Enter] to continue..." key
-}
-
-# show menu options
-function show_menu() {
-  clear
-  echo "===================================="
-  echo "HABIT Main Menu"
-  echo "===================================="
-  echo "1. Show filesystem information"
-  echo "2. Show block device information"
-  echo "3. List of directories under '/' and their size"
-  echo "4. Show disk space usage"
-  echo "5. Show top memory & cpu eating process"
-  echo "6. Show network config and stats"
-  echo "7. Show operating system information"
-  echo "8. Show users activity"
-  echo "q for Exit"
-  echo ""
-  read -p "Select menu option: " answer
-}
-
-
-#check_root
-
+# Start script execution
 while true
 do
   show_menu
   case $answer in
-    1) pause "$(df -h)" ;;
-    2) pause "$(lsblk)" ;;
-    3) pause "$(du -sh /)" ;;
-    4) pause "$(df -h)" ;;
-    5) ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10; pause ;;
-    6) ip -4 -o -s addr | column -t;
-       echo ""
-       cat /etc/resolv.conf; pause ;;
-    7) pause "$(uname -r)" ;;
-    8) pause "$(who)" ;;
-    q) break ;;
+    1) pause "$(df -h)" | tee fs_info.out ;;
+
+    2) pause "$(lsblk)" | tee blk_info.out ;;
+
+    3) pause "$(du -sh /home/shuraosipov/)" | tee dir_info.out ;;
+
+    4) pause "$(df -h)" | tee dsk_info.out ;;
+
+    5) echo "Most CPU consuming processes: " | tee sys_info.out;
+       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10 | tee -a sys_info.out;
+       echo "Most Memory consuming processes:" | tee -a sys_info.out
+       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10 | tee -a sys_info.out;
+       pause ;;
+
+    6) ip -4 -o -s addr | column -t | tee ip_info.out;
+       echo "" | tee -a ip_info.out
+       cat /etc/resolv.conf | tee -a ip_info.out;
+       pause ;;
+
+    7) echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1 | tee os_info.out;
+       echo -n "Kernel version: "; uname -r | tee -a  os_info.out;
+       pause ;;
+
+    8) pause "$(who)" | tee who_info.out ;;
+
+    q) exit 0 ;;
+
+    # additinal features
+    s) pause "Starting HABIT service..." ;;
   esac
 
 done
