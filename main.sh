@@ -39,7 +39,8 @@ do
     q) exit 0 ;;
 
     # additinal features
-    s) pause "Starting HABIT service..." ;;
+    s) start_habitd ;;
+    d) stop_habitd  ;;
   esac
 
 done

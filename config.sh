@@ -2,6 +2,16 @@
 # script name : config.sh
 # purpose : store functions and configuration elements
 
+
+# Configuration settings
+
+# Log file location
+HABIT_BASE_DIR="/opt/HABIT"
+HABIT_LOG_LOCATION="/opt/HABIT/log"
+
+
+
+
 # Define functions
 
 # Function 1. check_root
@@ -36,6 +46,7 @@ function show_menu() {
   printf "%b" "q for Exit\n"
   printf "%b" "\n"
   printf "%b" "s. Start HABIT service\n"
+  printf "%b" "d. Stop HABIT service\n"
   printf "%b" "\n"
   read -rp "Select menu option: " answer
 }
@@ -47,5 +58,19 @@ function pause() {
   local message
   message="$@"
   printf "%b" "$message\n"
+  read -rp "Press [Enter] to continue..."
+}
+
+# Function 4. start_habitd
+function start_habitd() {
+  echo "*/2 * *  *  * root /home/shuraosipov/Documents/bench/git/HABIT/habitd.sh" > /etc/cron.d/habitd
+  echo "HABIT service started"
+  read -rp "Press [Enter] to continue..."
+}
+
+# Function 5. stop_habitd
+function stop_habitd() {
+  rm -rf /etc/cron.d/habitd
+  echo "HABIT service stopped"
   read -rp "Press [Enter] to continue..."
 }
