@@ -4,12 +4,18 @@
 
 
 # Configuration settings
-
-# Log file location
-
 BASEDIR="/opt/habit"
 PIDFILE="/var/run/habit.pid"
-LOGDIR="/var/log/habit"
-LOGFILE="/var/log/habit/habit.log"
 SCRIPT="$BASEDIR/habit_service.sh"
-HABITD="$BASEDIR/checker.sh"
+HABITD="$BASEDIR/check_changes.sh"
+
+# Log file location
+LOGDIR="/var/log/habit"
+
+# Log file name
+# Main log file for habit
+LOGFILE="/var/log/habit/habit.log"
+LOGFILE_CRON="/var/log/habit/habit_cron.log"
+REPORT="/var/log/habit/report.log"
+
+# Log files for

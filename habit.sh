@@ -6,41 +6,46 @@
 source conf/config.sh
 source conf/functions.sh
 
+
 # Start script execution
 while true
 do
   show_menu
   case $answer in
-    1) pause "$(df -h)" | tee $LOGDIR/filesystem.info ;;
+    1) pause "$(df -h)" ;;
 
-    2) pause "$(lsblk)" | tee $LOGDIR/block_dev.info ;;
+    2) pause "$(lsblk)" ;;
 
-    3) pause "$(du -sh /home/)" | tee $LOGDIR/dir_size.info ;;
+    3) pause "$(du -sh /home/)" ;;
 
-    4) pause "$(df -h)" | tee $LOGDIR/disk_usage.info ;;
+    4) pause "$(df -h)" ;;
 
-    5) echo "Most CPU consuming processes: " | tee $LOGDIR/sys_utilization.info;
-       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10 | tee -a $LOGDIR/sys_utilization.info;
-       echo "Most Memory consuming processes:" | tee -a $LOGDIR/sys_utilization.info;
-       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10 | tee -a $LOGDIR/sys_utilization.info;
+    5) echo "Most CPU consuming processes: ";
+       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10;
+       echo "Most Memory consuming processes:";
+       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10;
        pause ;;
 
-    6) ip -4 -o -s addr | column -t | tee $LOGDIR/network.info;
-       echo "" | tee -a $LOGDIR/network.info
-       cat /etc/resolv.conf | tee -a $LOGDIR/network.info;
+    6) ip -4 -o -s addr | column -t;
+       echo ""
+       cat /etc/resolv.conf;
        pause ;;
 
-    7) echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1 | tee $LOGDIR/os.info;
-       echo -n "Kernel version: "; uname -r | tee -a  $LOGDIR/os.info;
+    7) echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1;
+       echo -n "Kernel version: "; uname -r;
        pause ;;
 
-    8) pause "$(who)" | tee $LOGDIR/sys_usage.info ;;
+    8) pause "$(who)";;
+
+    9) save_sysinfo $LOGFILE;
+       echo "System information saved to $LOGFILE file"
+       pause ;;
 
     q) exit 0 ;;
 
     # Stop/Start habitd service
-    s) start_habitd ;;
-    d) stop_habitd  ;;
+    s) start_habitd; pause ;;
+    d) stop_habitd; pause ;;
   esac
 
 done

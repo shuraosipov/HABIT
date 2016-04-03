@@ -4,6 +4,7 @@
 # Load config
 source conf/config.sh
 
+
 # Define functions
 
 # Function 1. check_root
@@ -35,6 +36,7 @@ function show_menu() {
   printf "%b" "6. Show network config and stats\n"
   printf "%b" "7. Show operating system information\n"
   printf "%b" "8. Show users activity\n"
+  printf "%b" "9. Save system information into file\n"
   printf "%b" "q for Exit\n"
   printf "%b" "\n"
   printf "%b" "s. Start HABIT service\n"
@@ -61,8 +63,7 @@ function start_habitd() {
     echo "Service already started..."
     read -rp "Press [Enter] to continue..."
   else
-    echo "0 7 * * * root /opt/habit/check.sh" > /etc/cron.d/habitd_service && echo "HABIT service started"
-    read -rp "Press [Enter] to continue..."
+    echo "0 7 * * * root /opt/habit/check_changes.sh" > /etc/cron.d/habitd_service && echo "HABIT service started"
   fi
 }
 
@@ -74,6 +75,60 @@ function stop_habitd() {
     read -rp "Press [Enter] to continue..."
   else
     echo "HABIT service not started..."
-    read -rp "Press [Enter] to continue..."
   fi
 }
+
+# Function 6. save system information into file
+function save_sysinfo() {
+  if [[ -e "$1" ]];
+  then
+    mv "$1" "$1"-$(date +"%d-%m-%y");
+  else
+    touch "$1"
+  fi
+
+  {
+    df -h;
+    echo "";
+
+    lsblk;
+    echo "";
+
+    du -sh /home/;
+    echo "";
+
+    df -h;
+    echo "";
+
+    echo "Most CPU consuming processes: "
+    ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10;
+    echo "Most Memory consuming processes:";
+    ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10;
+    echo "";
+
+    ip -4 -o -s addr | column -t;
+    echo ""
+    cat /etc/resolv.conf;
+    echo ""
+
+    echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1;
+    echo -n "Kernel version: "; uname -r;
+    echo ""
+
+    who
+    echo ""
+
+  } > "$1"
+
+}
+
+
+# Function 7. compare files and send email to amdin if differs
+function check_changes() (
+  GET_SATUS=$(diff -qs $LOGFILE $LOGFILE_CRON)
+  if [[ $? -eq 0 ]];then
+    echo "files match + " \"$(date)\" >> $REPORT
+  else
+    echo "files differ + " \"$(date)\" >> $REPORT
+  fi
+)
