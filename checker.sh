@@ -1,10 +1,13 @@
 #!/bin/bash
+# 
+
+# Load config elements and functions from configuration file
 source conf/config.sh
 
-while true
-do
-  df -h > $LOGDIR/fs_info_habitd.out
-  lsblk > $LOGDIR/blk_info_habitd.out
+df -h > $LOGDIR/fs_info_habitd.out
+lsblk > $LOGDIR/blk_info_habitd.out
+
+
 
   GET_SATUS=$(diff -qs $LOGDIR/fs_info.out $LOGDIR/fs_info_habitd.out)
   if [[ $? -eq 0 ]];then
@@ -15,5 +18,4 @@ do
   else
     break
   fi
-sleep 5
-done
+

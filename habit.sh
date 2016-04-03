@@ -2,7 +2,7 @@
 # Usage : bash habit.sh
 # HAndy Bash system Information Tool
 
-# Include config elements and functions from configuration file
+# Load config elements and functions from configuration file
 source conf/config.sh
 source conf/functions.sh
 
@@ -11,30 +11,30 @@ while true
 do
   show_menu
   case $answer in
-    1) pause "$(df -h)" | tee $LOGDIR/fs_info.out ;;
+    1) pause "$(df -h)" | tee $LOGDIR/filesystem.info ;;
 
-    2) pause "$(lsblk)" | tee $LOGDIR/blk_info.out ;;
+    2) pause "$(lsblk)" | tee $LOGDIR/block_dev.info ;;
 
-    3) pause "$(du -sh /home/shuraosipov/)" | tee $LOGDIR/dir_info.out ;;
+    3) pause "$(du -sh /home/)" | tee $LOGDIR/dir_size.info ;;
 
-    4) pause "$(df -h)" | tee $LOGDIR/dsk_info.out ;;
+    4) pause "$(df -h)" | tee $LOGDIR/disk_usage.info ;;
 
-    5) echo "Most CPU consuming processes: " | tee $LOGDIR/sys_info.out;
-       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10 | tee -a $LOGDIR/sys_info.out;
-       echo "Most Memory consuming processes:" | tee -a $LOGDIR/sys_info.out
-       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10 | tee -a $LOGDIR/sys_info.out;
+    5) echo "Most CPU consuming processes: " | tee $LOGDIR/sys_utilization.info;
+       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10 | tee -a $LOGDIR/sys_utilization.info;
+       echo "Most Memory consuming processes:" | tee -a $LOGDIR/sys_utilization.info;
+       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10 | tee -a $LOGDIR/sys_utilization.info;
        pause ;;
 
-    6) ip -4 -o -s addr | column -t | tee $LOGDIR/ip_info.out;
-       echo "" | tee -a $LOGDIR/ip_info.out
-       cat /etc/resolv.conf | tee -a $LOGDIR/ip_info.out;
+    6) ip -4 -o -s addr | column -t | tee $LOGDIR/network.info;
+       echo "" | tee -a $LOGDIR/network.info
+       cat /etc/resolv.conf | tee -a $LOGDIR/network.info;
        pause ;;
 
-    7) echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1 | tee $LOGDIR/os_info.out;
-       echo -n "Kernel version: "; uname -r | tee -a  $LOGDIR/os_info.out;
+    7) echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1 | tee $LOGDIR/os.info;
+       echo -n "Kernel version: "; uname -r | tee -a  $LOGDIR/os.info;
        pause ;;
 
-    8) pause "$(who)" | tee $LOGDIR/who_info.out ;;
+    8) pause "$(who)" | tee $LOGDIR/sys_usage.info ;;
 
     q) exit 0 ;;
 
