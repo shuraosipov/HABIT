@@ -1,0 +1,12 @@
+[Unit]
+Description=habit service for system utilization monitoring
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/workspace/bench/git/HABIT/habitd start
+ExecStop=/workspace/bench/git/HABIT/habitd stop
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+case "$1" in
+  start) daemonize -a -e /var/log/habit.err -o /var/log/habit.out -p /var/run/habitd.pid /workspace/bench/git/HABIT/sys_util.sh ;;
+  stop) kill -TERM $(cat /var/run/habitd.pid) && rm -f /var/run/habitd.pid ;;
+esac
