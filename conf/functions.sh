@@ -1,9 +1,10 @@
 #!/bin/bash
 # script name : functions.sh
 # purpose : store functions
+
+
 # Load config
 source conf/config.sh
-
 
 # Define functions
 
@@ -19,10 +20,9 @@ function check_root() {
   fi
 }
 
-
 # Function 2. show_menfu
 # Display user menu
-# show menu options
+# Show menu options
 function show_menu() {
   clear
   printf "%b" "====================================\n"
@@ -42,6 +42,11 @@ function show_menu() {
   printf "%b" "s. Start HABIT service\n"
   printf "%b" "d. Stop HABIT service\n"
   printf "%b" "\n"
+  printf "%b" "n. Start System Utilization daemon\n"
+  printf "%b" "m. Stop System Utilization daemon\n"
+  printf "%b" "\n"
+  printf "%b" "c. Run Common Vulnerabilities and Exposures (CVE) checker\n"
+  printf "%b" "\n"
   read -rp "Select menu option: " answer
 }
 
@@ -56,7 +61,7 @@ function pause() {
 }
 
 # Function 4. start background service
-
+# Add cron entry which checks log files every hour
 function start_habitd() {
   if [[ -s "/etc/cron.d/habitd_service" ]];
   then
@@ -68,6 +73,7 @@ function start_habitd() {
 }
 
 # Function 5. stop_habitd
+# Remove cron entry
 function stop_habitd() {
   if [[ -e "/etc/cron.d/habitd_service" ]];
   then
@@ -131,4 +137,40 @@ function check_changes() (
   else
     echo "files differ + " \"$(date)\" >> $REPORT
   fi
+)
+
+# Function 8. Start system utilization daemon
+function start_sysutils() (
+  daemonize -a -e ${SYS_UTIL_LOG_ERR} -o ${SYS_UTIL_LOG} -p ${SYS_UTIL_PIDFILE} ${SYS_UTIL_SCRIPT}
+  if [[ $? -eq 0 ]]
+    then
+      echo "System utilization daemon started successfull"
+  else
+      echo "unable to start system utilization daemon"
+  fi
+)
+
+# Function 9. Stop system utilization daemon
+function stop_sysutils () (
+  kill -TERM $(cat ${SYS_UTIL_PIDFILE}) && rm -f ${SYS_UTIL_PIDFILE}
+  if [[ $? -eq 0 ]]
+    then
+      echo "System utilization daemon stopped successfull"
+  else
+      echo "Unable to stop system utilization daemon"
+  fi 
+
+)
+
+# Function 10. Start CVE check
+function start_cvecheck() (
+  oscap oval eval --results ${CVE_RESULTS --report ${CVE_REPORT} ${SCAP_DEFINITION} 2>&1 /dev/null
+  if [[ $? -ne 0 ]]
+    then
+      echo "CVE scan done. Find report here - ${CVE_REPORT}"
+  else 
+      echo "CVE scan done with errors"
+  fi
+
+
 )

@@ -43,9 +43,17 @@ do
 
     q) exit 0 ;;
 
-    # Stop/Start habitd service
+    # Start/Stop habit service
     s) start_habitd; pause ;;
     d) stop_habitd; pause ;;
+
+    # Start/Stop system util daemon
+    n) start-sysutils; pause ;;
+    m) stop-sysutils; pause ;;
+
+
+    # Start CVE check
+    c) start_cvecheck; pause;;    
   esac
 
 done
