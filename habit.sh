@@ -48,12 +48,12 @@ do
     d) stop_habitd; pause ;;
 
     # Start/Stop system util daemon
-    n) start-sysutils; pause ;;
-    m) stop-sysutils; pause ;;
+    n) start_sysutils; pause ;;
+    m) stop_sysutils; pause ;;
 
 
     # Start CVE check
-    c) start_cvecheck; pause;;    
+    c) start_cvecheck; pause;;
   esac
 
 done

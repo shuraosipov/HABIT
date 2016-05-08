@@ -2,7 +2,6 @@
 BASEDIR="/opt/habit"
 LOGDIR="/var/log/habit"
 
-
 if [[ -d $BASEDIR ]]; then
   echo "Directory $BASEDIR already exists"
   exit 1

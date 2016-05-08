@@ -158,19 +158,23 @@ function stop_sysutils () (
       echo "System utilization daemon stopped successfull"
   else
       echo "Unable to stop system utilization daemon"
-  fi 
+  fi
 
 )
 
 # Function 10. Start CVE check
 function start_cvecheck() (
-  oscap oval eval --results ${CVE_RESULTS --report ${CVE_REPORT} ${SCAP_DEFINITION} 2>&1 /dev/null
+  oscap oval eval --results ${CVE_RESULTS} --report ${CVE_REPORT} ${SCAP_DEFINITION} &> /dev/null
   if [[ $? -ne 0 ]]
     then
-      echo "CVE scan done. Find report here - ${CVE_REPORT}"
-  else 
+      echo "CVE scan done. Find report here ${CVE_REPORT}"
+  else
       echo "CVE scan done with errors"
   fi
 
+)
+
+# Function 11. Save results to database
+function save_results() (
 
 )
