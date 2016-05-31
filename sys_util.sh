@@ -2,18 +2,18 @@
 
 # get real memory usage wo page cache
 
-REALMEM="$(free -m | awk 'NR==2{printf "%s\n", $4+$6}')"
-HIGH_NORMA="5000"
-PERCENTS="$(free -m | awk 'NR==2{printf "%s\n", $2*30/100}')"
+REAL_MEM="$(free -m | awk 'NR==2{printf "%s\n", $4+$6}')"
+NORM_MEM="5000"
+CRITICAL="$(free -m | awk 'NR==2{printf "%s\n", $2*30/100}')"
 
 
 while true
 do
-  if [[ $REALMEM -gt $HIGH_NORMA ]];
+  if [[ $REAL_MEM -gt $CRITICAL ]];
   then
-   echo "Send alert... Low available memory - $REALMEM"
+   echo "Send alert... Low available memory - $REAL_MEM"
   else
-   echo "continue.. - $REALMEM."
+   echo "continue.. - $REAL_MEM."
   fi
 sleep 60
 done
