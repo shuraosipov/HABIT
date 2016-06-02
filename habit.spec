@@ -8,7 +8,6 @@ License:        GPLv2+
 URL:            https://github.com/shuraosipov/habit
 Source0:        %{name}-%{version}.tar.gz
 
-BuildRequires:  daemonize
 
 
 %description
