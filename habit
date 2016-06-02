@@ -25,9 +25,10 @@ do
 
     5) echo ""
        echo "Most CPU consuming processes: ";
-       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10;
+       ps -eo pcpu,pid,comm,user | sort -r | head -11;
+       echo "";
        echo "Most Memory consuming processes:";
-       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10;
+       ps -eo %mem,pid,comm,user | sort -r | head -11;
        pause ;;
 
     6) echo ""

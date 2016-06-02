@@ -4,7 +4,7 @@
 
 
 # Load config
-source conf/config.sh
+source /etc/habit/conf/config.sh
 
 # Define functions
 
@@ -25,9 +25,9 @@ function check_root() {
 # Show menu options
 function show_menu() {
   clear
-  printf "%b" "====================================\n"
-  printf "%b" "HABIT Main Menu\n"
-  printf "%b" "====================================\n"
+  printf "%b" "=============================================================\n"
+  printf "%b" "                            habit                            \n"
+  printf "%b" "=============================================================\n"
   printf "%b" "1. Show filesystem information\n"
   printf "%b" "2. Show block device information\n"
   printf "%b" "3. List of directories under '/' and their size\n"
@@ -37,7 +37,6 @@ function show_menu() {
   printf "%b" "7. Show operating system information\n"
   printf "%b" "8. Show users activity\n"
   printf "%b" "9. Save system information into file\n"
-  printf "%b" "q for Exit\n"
   printf "%b" "\n"
   printf "%b" "s. Start HABIT service\n"
   printf "%b" "d. Stop HABIT service\n"
@@ -47,7 +46,11 @@ function show_menu() {
   printf "%b" "\n"
   printf "%b" "c. Run Common Vulnerabilities and Exposures (CVE) checker\n"
   printf "%b" "\n"
+  printf "%b" "q for Exit\n"
+  printf "%b" "\n"
+  
   read -rp "Select menu option: " answer
+  printf "%b" "\n"
 }
 
 
@@ -57,6 +60,7 @@ function pause() {
   local message
   message="$@"
   printf "%b" "$message\n"
+  printf "%b" "\n"
   read -rp "Press [Enter] to continue..."
 }
 
@@ -68,7 +72,7 @@ function start_habitd() {
     echo "Service already started..."
     read -rp "Press [Enter] to continue..."
   else
-    echo "0 7 * * * root /opt/habit/check_changes.sh" > /etc/cron.d/habitd_service && echo "HABIT service started"
+    echo "0 7 * * * root $BASE_DIR/check_changes.sh" > /etc/cron.d/habitd_service && echo "HABIT service started"
   fi
 }
 
@@ -141,6 +145,7 @@ function check_changes() (
 
 # Function 8. Start system utilization daemon
 function start_sysutils() (
+  
   daemonize -a -e ${SYS_UTIL_LOG_ERR} -o ${SYS_UTIL_LOG} -p ${SYS_UTIL_PIDFILE} ${SYS_UTIL_SCRIPT}
   if [[ $? -eq 0 ]]
     then
@@ -164,12 +169,31 @@ function stop_sysutils () (
 
 # Function 10. Start CVE check
 function start_cvecheck() (
-  oscap oval eval --results ${CVE_RESULTS} --report ${CVE_REPORT} ${SCAP_DEFINITION} &> /dev/null
-  if [[ $? -ne 0 ]]
+  if [[ -z $SCAP_DEFINITION ]]
+  then
+  echo "Please specify SCAP definition file location in config file"
+  echo "Definition files located in /usr/share/xml/scap/ssg/content/"
+  else
+  echo "CVE scanning started. Please wait..."
+  oscap oval eval --results ${CVE_RESULTS} --report ${CVE_REPORT} ${SCAP_DEFINITION} &> ${CVE_LOG}
+  if [[ $? -eq 0 ]]
     then
-      echo "CVE scan done. Find report here ${CVE_REPORT}"
+      compl_false=$(grep -E '(false|error)' ${CVE_LOG} | wc -l)
+      compl_true=$(grep 'true' ${CVE_LOG} | wc -l)
+      compl_total=$(wc -l < ${CVE_LOG})
+      
+
+      echo ""
+      echo "CVE scanning results:"
+      echo ""
+      echo "Non compliant: " $compl_false
+      echo "Compliant: " $compl_true
+      echo "Total:  " $compl_total	 
+      echo ""
+      echo "Please find report here ${CVE_REPORT}"
   else
       echo "CVE scan done with errors"
+  fi
   fi
 
 )
