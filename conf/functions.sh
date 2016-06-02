@@ -192,7 +192,7 @@ function start_cvecheck() (
       echo ""
       echo "Please find report here ${CVE_REPORT}"
   else
-      echo "CVE scan done with errors"
+      echo "CVE scan done with errors. Examine ${CVE_LOG} for more details."
   fi
   fi
 
