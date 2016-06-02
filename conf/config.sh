@@ -4,7 +4,7 @@
 
 
 # Configuration settings
-BASEDIR="/opt/habit"
+BASEDIR="/etc/habit"
 PIDFILE="/var/run/habit.pid"
 SCRIPT="$BASEDIR/habit_service.sh"
 HABITD="$BASEDIR/check_changes.sh"

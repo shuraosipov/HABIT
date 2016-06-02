@@ -1,0 +1,89 @@
+#!/bin/bash
+# Usage : bash habit.sh
+# HAndy Bash system Information Tool
+
+# Load config elements and functions from configuration file
+source conf/config.sh
+source conf/functions.sh
+
+
+# Start script execution
+while true
+do
+  show_menu
+  case $answer in
+    1) pause "$(fdisk -l)" ;;
+
+    2) pause "$(lsblk)" ;;
+
+    3) echo ""
+       echo "Size    Mount point";
+       du -h -D -s /* --exclude=/proc --exclude=/run | sort -hr;
+       pause ;;
+
+    4) pause "$(df -h)" ;;
+
+    5) echo ""
+       echo "Most CPU consuming processes: ";
+       ps -eo pcpu,pid,comm,user | sort -nr -k1 | head -10;
+       echo "Most Memory consuming processes:";
+       ps -eo %mem,pid,comm,user | sort -nr -k1 | head -10;
+       pause ;;
+
+    6) echo ""
+       echo "Network configuration:";
+       echo "------------------------------------"
+       ip -4 -o -s addr | column -t;
+       echo ""
+       echo "DNS Settings:"
+       echo "------------------------------------"
+       cat /etc/resolv.conf;
+       echo ""
+       echo "Runlevel:"
+       echo "------------------------------------"
+       systemctl get-default
+       echo ""
+       echo "List of all cron jobs for all users:"
+       echo "------------------------------------"
+       for user in $(grep -v "/sbin/nologin" /etc/passwd | cut -f1 -d:); do crontab -u $user -l; done
+       pause ;;
+
+    7) echo -n "Linux Distribution name: "; cat /etc/*-release | head -n 1;
+       echo -n "Kernel version: "; uname -r;
+       pause ;;
+
+    8) echo "";
+       echo "System Uptime:";
+       echo "-----------------------------------------"
+       uptime;
+       echo "";
+       echo "List of all the bad login attempts:";
+       echo "-----------------------------------------"
+       lastb -awF | column -t
+       echo ""
+       echo ""
+       echo "Who is logged on and what they are doing:";
+       echo "-----------------------------------------"
+       w -hu
+       pause ;;
+
+    9) save_sysinfo $LOGFILE;
+       echo "System information saved to $LOGFILE file"
+       pause ;;
+
+    q) exit 0 ;;
+
+    # Start/Stop habit service
+    s) start_habitd; pause ;;
+    d) stop_habitd; pause ;;
+
+    # Start/Stop system util daemon
+    n) start_sysutils; pause ;;
+    m) stop_sysutils; pause ;;
+
+
+    # Start CVE check
+    c) start_cvecheck; pause;;
+  esac
+
+done
