@@ -16,7 +16,7 @@ LOGFILE_CRON="/var/log/habit/habit_cron.log"
 REPORT="/var/log/habit/report.log"
 
 # Sysutil
-SYS_UTIL_SCRIPT="/workplace/bench/git/habit/sys_util.sh"
+SYS_UTIL_SCRIPT="$BASE_DIR/sys_util.sh"
 SYS_UTIL_LOG="/var/log/habit.out"
 SYS_UTIL_LOG_ERR="/var/log/habit.err"
 SYS_UTIL_PIDFILE="/var/run/habit.pid"

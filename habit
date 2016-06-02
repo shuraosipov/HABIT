@@ -3,8 +3,8 @@
 # HAndy Bash system Information Tool
 
 # Load config elements and functions from configuration file
-source conf/config.sh
-source conf/functions.sh
+source /etc/habit/conf/config.sh
+source /etc/habit/conf/functions.sh
 
 
 # Start script execution
